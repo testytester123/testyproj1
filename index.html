@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gacha Privacy Terminal</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0d0d0d;
+      font-family: 'Courier New', Courier, monospace;
+      color: #00ff99;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+    .terminal {
+      background-color: #1a1a1a;
+      border: 2px solid #00ff99;
+      border-radius: 8px;
+      padding: 1rem;
+      width: 100%;
+      max-width: 800px;
+      box-shadow: 0 0 20px #00ff99;
+      overflow: auto;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin: 0 0 1rem 0;
+      line-height: 1.4;
+    }
+    .input-area {
+      margin-top: 1rem;
+    }
+    textarea {
+      background: #0d0d0d;
+      border: 1px solid #00ff99;
+      color: #00ff99;
+      width: 100%;
+      height: 60px;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: none;
+      padding: 0.5rem;
+    }
+    .status, .result {
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+    .valid {
+      color: #00ff99;
+    }
+    .tampered {
+      color: #ff4444;
+    }
+    .code-line {
+      display: block;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    .code-line.active {
+      opacity: 1;
+      background-color: rgba(0, 255, 153, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <pre id="terminalOutput">
+Welcome to the Gacha Privacy Terminal.
+Enter your operating system to get your secure browser recommendation.
+→ Accepted (case-sensitive): Android, iOS, Linux, Windows, macOS
+Or type "skip" if you already have Tor Browser active.
+    </pre>
+    <div class="input-area">
+      <textarea id="inputBox" placeholder="Type here..."></textarea>
+    </div>
+    <pre id="codeExecution"></pre>
+    <div class="result" id="resultMsg"></div>
+  </div>  <script>
+    const osLinks = {
+      Android: {
+        name: 'Tor Browser for Android',
+        url: 'https://www.torproject.org/download/#android',
+        hash: '05ad2f9ea1d6637e3f72b8b20e1f763b0e3b4529734b35ea83521fd1875c3d8c'
+      },
+      iOS: {
+        name: 'Onion Browser (recommended by Tor Project)',
+        url: 'https://onionbrowser.com',
+        hash: 'c2f31a2e0d0dc60c78a4ec5fc4f6eab6eae09a2c2e693c9fa869be45a25a1775'
+      },
+      Linux: {
+        name: 'Tor Browser for Linux',
+        url: 'https://www.torproject.org/download/#linux',
+        hash: 'c3f490b4ccdbdb47d2ff4fc2e78ccf3f441e342fa57d70925733f59a82386c9a'
+      },
+      Windows: {
+        name: 'Tor Browser for Windows',
+        url: 'https://www.torproject.org/download/#windows',
+        hash: 'd83246b59d8ad84c51212eac31fa20487c2c65de2ae0c8f2c0b04e5db43c1c82'
+      },
+      macOS: {
+        name: 'Tor Browser for macOS',
+        url: 'https://www.torproject.org/download/#macos',
+        hash: 'f5ea5aab2be5ff2953793f39c847f021e992d7022c46f5a361a9b847c24d8cfa'
+      }
+    };
+
+    const inputBox = document.getElementById("inputBox");
+    const resultMsg = document.getElementById("resultMsg");
+    const codeExecution = document.getElementById("codeExecution");
+
+    const animateCode = (lines, onComplete) => {
+      codeExecution.innerHTML = '';
+      lines.forEach((line, index) => {
+        const span = document.createElement('span');
+        span.className = 'code-line';
+        span.textContent = line;
+        codeExecution.appendChild(span);
+        setTimeout(() => {
+          span.classList.add('active');
+          if (index === lines.length - 1 && typeof onComplete === 'function') {
+            setTimeout(onComplete, 700);
+          }
+        }, 600 * index);
+      });
+    };
+
+    function isLikelyTorBrowser() {
+      const ua = navigator.userAgent;
+      return ua.includes("Firefox") && !navigator.plugins.length && (ua.includes("Windows NT") || ua.includes("Linux"));
+    }
+
+    inputBox.addEventListener("input", () => {
+      const val = inputBox.value.trim();
+      if (osLinks[val]) {
+        const entry = osLinks[val];
+        const codeLines = [
+          `// Recommended: ${entry.name}`,
+          `// Secure download URL:`,
+          `let url = "${entry.url}";`,
+          `// SHA256 verification:`,
+          `let hash = "${entry.hash}";`,
+          `// Privacy notice: All connections routed over Tor.`,
+          `// Now redirecting to official download site...`,
+          `window.location.href = url;`
+        ];
+        animateCode(codeLines, () => {
+          window.location.href = entry.url;
+        });
+        inputBox.value = '';
+      } else if (val === "skip") {
+        if (isLikelyTorBrowser()) {
+          const codeLines = [
+            `// Verifying Tor Browser environment...`,
+            `let verified = true;`,
+            `// Redirecting to Tor-only site...`,
+            `window.location.href = "http://expyuzz4wqqyqhjn.onion";`
+          ];
+          animateCode(codeLines, () => {
+            window.location.href = "http://expyuzz4wqqyqhjn.onion";
+          });
+        } else {
+          resultMsg.textContent = "❌ Tor Browser not detected. Please launch with Tor and try again.";
+        }
+      } else if (val.length > 0) {
+        resultMsg.textContent = `❌ "${val}" not recognized. Please use exact case: Android, iOS, Linux, Windows, macOS or type 'skip'.`;
+      } else {
+        resultMsg.textContent = '';
+      }
+    });
+  </script></body>
+</html>
