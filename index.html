@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Gateway - Gacha Terminal</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #00ff99;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .terminal {
+      background: #1a1a1a;
+      border: 2px solid #00ff99;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 0 20px #00ff99;
+    }
+    .terminal pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .input-line {
+      margin-top: 1rem;
+    }
+    input[type="text"] {
+      background: #0d0d0d;
+      border: 1px solid #00ff99;
+      color: #00ff99;
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    .highlight {
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <pre id="output">
+> Welcome to the Gacha Terminal Privacy Gateway> This interface is ephemeral. No logs. No trackers. No third-party scripts. To continue, you must cloak your IP via the NYM Mixnet.
+
+
+
+> You will be shown the exact line of JavaScript that opens the NYM VPN download page. You'll also see a SHA256 hash — a cryptographic fingerprint — proving the code hasn’t been altered. If this hash ever changes, it means something has been tampered with.
+
+
+
+> To begin the ritual, type: <span class="highlight">lets go to nym</span> </pre> <div class="input-line"> <input type="text" id="userInput" placeholder="Type here..."> </div>
+
+
+
+  </div>  <script>
+    const output = document.getElementById("output");
+    const input = document.getElementById("userInput");
+
+    const nymAction = 'window.open("https://nymtech.net/download", "_blank")';
+    const nymHash = '31f2ef0a4fae2f93b982f9c9edc946bb979d007c5cd5c6ae3d7207a8c68a8b32'; // SHA256 hash
+
+    let step = 0;
+
+    input.addEventListener("keydown", async function(e) {
+      if (e.key === "Enter") {
+        const val = input.value.trim().toLowerCase();
+        input.value = "";
+
+        if (step === 0 && val === "lets go to nym") {
+          output.innerHTML += `\n> Preparing to open NYM VPN download link...\n> Target URL: https://nymtech.net/download\n> Execution Code: ${nymAction}\n> SHA256 (code hash): ${nymHash}\n> This confirms the code you're seeing matches the official logic. No surprises.\n\n> Type <span class="highlight">confirm</span> to proceed.`;
+          step = 1;
+        } else if (step === 1 && val === "confirm") {
+          output.innerHTML += `\n> Executing download link...\n> You are now cloaked. Return when ready.`;
+          setTimeout(() => {
+            window.open("https://nymtech.net/download", "_blank");
+          }, 500);
+          step = 2;
+        } else {
+          output.innerHTML += `\n> Invalid input. Try again.`;
+        }
+        output.scrollTop = output.scrollHeight;
+      }
+    });
+  </script></body>
+</html>
