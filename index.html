@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Gacha Terminal</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0d0d0d;
+      font-family: 'Courier New', Courier, monospace;
+      color: #00ff99;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+    .terminal {
+      background-color: #1a1a1a;
+      border: 2px solid #00ff99;
+      border-radius: 8px;
+      padding: 1rem;
+      width: 100%;
+      max-width: 800px;
+      box-shadow: 0 0 20px #00ff99;
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+    .terminal pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .input-area {
+      margin-top: 1rem;
+    }
+    textarea {
+      background: #0d0d0d;
+      border: 1px solid #00ff99;
+      color: #00ff99;
+      width: 100%;
+      height: 60px;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: none;
+      padding: 0.5rem;
+    }
+    .status {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+    .status span {
+      font-weight: bold;
+    }
+    .result {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      color: #ffffff;
+    }
+    .valid {
+      color: #00ff99;
+    }
+    .tampered {
+      color: #ff4444;
+    }
+    .code-viewer {
+      background-color: #000;
+      color: #00ff99;
+      padding: 0.5rem;
+      margin-top: 1rem;
