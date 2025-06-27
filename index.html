@@ -1,0 +1,138 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gacha Privacy Terminal</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0d0d0d;
+      font-family: 'Courier New', Courier, monospace;
+      color: #00ff99;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+    .terminal {
+      background-color: #1a1a1a;
+      border: 2px solid #00ff99;
+      border-radius: 8px;
+      padding: 1rem;
+      width: 100%;
+      max-width: 800px;
+      box-shadow: 0 0 20px #00ff99;
+      overflow: auto;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin: 0 0 1rem 0;
+      line-height: 1.4;
+    }
+    .input-area {
+      margin-top: 1rem;
+    }
+    textarea {
+      background: #0d0d0d;
+      border: 1px solid #00ff99;
+      color: #00ff99;
+      width: 100%;
+      height: 60px;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: none;
+      padding: 0.5rem;
+    }
+    .status, .result {
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+    .valid {
+      color: #00ff99;
+    }
+    .tampered {
+      color: #ff4444;
+    }
+    .animated-line {
+      display: block;
+      animation: highlight 1s ease-in-out forwards;
+    }
+    @keyframes highlight {
+      0% { background-color: rgba(0, 255, 153, 0.1); }
+      100% { background-color: transparent; }
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <pre id="terminalOutput">
+Welcome to the Gacha Privacy Terminal.
+Please enter your operating system to continue:→ Accepted: Android, iOS, Linux, Windows, macOS
+(case-sensitive) </pre> <div class="input-area"> <textarea id="inputBox" placeholder="Type here..."></textarea> </div> <div class="result" id="resultMsg"></div>
+
+  </div>  <script>
+    const osLinks = {
+      Android: {
+        name: 'Tor Browser for Android',
+        url: 'https://www.torproject.org/download/#android',
+        hash: '05ad2f9ea1d6637e3f72b8b20e1f763b0e3b4529734b35ea83521fd1875c3d8c'
+      },
+      iOS: {
+        name: 'Onion Browser (recommended by Tor Project)',
+        url: 'https://onionbrowser.com',
+        hash: 'c2f31a2e0d0dc60c78a4ec5fc4f6eab6eae09a2c2e693c9fa869be45a25a1775'
+      },
+      Linux: {
+        name: 'Tor Browser for Linux',
+        url: 'https://www.torproject.org/download/#linux',
+        hash: 'c3f490b4ccdbdb47d2ff4fc2e78ccf3f441e342fa57d70925733f59a82386c9a'
+      },
+      Windows: {
+        name: 'Tor Browser for Windows',
+        url: 'https://www.torproject.org/download/#windows',
+        hash: 'd83246b59d8ad84c51212eac31fa20487c2c65de2ae0c8f2c0b04e5db43c1c82'
+      },
+      macOS: {
+        name: 'Tor Browser for macOS',
+        url: 'https://www.torproject.org/download/#macos',
+        hash: 'f5ea5aab2be5ff2953793f39c847f021e992d7022c46f5a361a9b847c24d8cfa'
+      }
+    };
+
+    const inputBox = document.getElementById("inputBox");
+    const resultMsg = document.getElementById("resultMsg");
+    const terminalOutput = document.getElementById("terminalOutput");
+
+    function appendAnimatedLine(text) {
+      const span = document.createElement("span");
+      span.className = "animated-line";
+      span.textContent = text + "\n";
+      terminalOutput.appendChild(span);
+      terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }
+
+    inputBox.addEventListener("input", () => {
+      const val = inputBox.value.trim();
+      if (osLinks[val]) {
+        const entry = osLinks[val];
+        appendAnimatedLine(`🟢 Recommended: ${entry.name}`);
+        appendAnimatedLine(`🔗 URL: ${entry.url}`);
+        appendAnimatedLine(`🔒 SHA256: ${entry.hash}`);
+        appendAnimatedLine(`\nThis browser ensures full privacy with Tor routing and zero DNS leaks.`);
+        appendAnimatedLine(`\nType \"confirm\" to simulate redirection.`);
+        inputBox.value = '';
+      } else if (val === "confirm") {
+        appendAnimatedLine(`[Simulated] Opening secure link...`);
+        appendAnimatedLine(`✅ You may now proceed with confidence.`);
+        inputBox.value = '';
+      } else if (val.length > 0) {
+        resultMsg.textContent = `❌ "${val}" not recognized.\nPlease use exact case: Android, iOS, Linux, Windows, macOS.`;
+      } else {
+        resultMsg.textContent = '';
+      }
+    });
+  </script></body>
+</html>
